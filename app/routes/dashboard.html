@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nokia Employee Recommendation Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --nokia-blue: #124191;
+            --nokia-light-blue: #00c9ff;
+            --nokia-dark-blue: #0a2c5c;
+            --nokia-gray: #f8fafc;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border-light: #e2e8f0;
+            --shadow: rgba(15, 23, 42, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--nokia-gray) 0%, #ffffff 100%);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--nokia-blue) 0%, var(--nokia-dark-blue) 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(18, 65, 145, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.05) 0%, rgba(0,201,255,0.1) 100%);
+            transform: skewX(-15deg);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .nokia-logo {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .status-indicators {
+            display: flex;
+            gap: 1rem;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px var(--shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+        }
+
+        .section-header {
+            padding: 2rem 2rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            background: linear-gradient(135deg, #ffffff 0%, var(--nokia-gray) 100%);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--nokia-blue) 0%, var(--nokia-light-blue) 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .section-description {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-left: 3rem;
+        }
+
+        .section-content {
+            padding: 2rem;
+        }
+
+        /* Employee Table */
+        .employee-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .employee-table th {
+            background: linear-gradient(135deg, var(--nokia-dark-blue) 0%, var(--nokia-blue) 100%);
+            color: white;
+            padding: 1.2rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+        }
+
+        .employee-table th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .employee-table th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .employee-table td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle;
+            font-size: 0.95rem;
+        }
+
+        .employee-table tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        .employee-table tbody tr:hover {
+            background: linear-gradient(135deg, var(--nokia-gray) 0%, #ffffff 100%);
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .employee-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        .employee-email {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .team-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .team-l1 {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+        }
+
+        .team-l2 {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+        }
+
+        .skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            max-width: 200px;
+        }
+
+        .skill-tag {
+            background: linear-gradient(135deg, var(--nokia-light-blue) 0%, #0ea5e9 100%);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .performance-score {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .score-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+
+        .score-bar {
+            width: 60px;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .score-high { background: linear-gradient(90deg, var(--success) 0%, #22c55e 100%); }
+        .score-medium { background: linear-gradient(90deg, var(--warning) 0%, #facc15 100%); }
+        .score-low { background: linear-gradient(90deg, var(--danger) 0%, #f87171 100%); }
+
+        /* Action Button */
+        .action-btn {
+            background: linear-gradient(135deg, var(--nokia-blue) 0%, var(--nokia-dark-blue) 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(18, 65, 145, 0.3);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .action-btn.sent {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            cursor: not-allowed;
+        }
+
+        /* Notifications */
+        .notification-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .notification-item {
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .notification-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-color: var(--success);
+        }
+
+        .notification-info {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-color: var(--nokia-light-blue);
+        }
+
+        .notification-warning {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-color: var(--warning);
+        }
+
+        .notification-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.success { background: var(--success); }
+        .notification-icon.info { background: var(--nokia-light-blue); }
+        .notification-icon.warning { background: var(--warning); }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .notification-subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .notification-time {
+            color: var(--text-light);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, var(--nokia-dark-blue) 0%, #0f172a 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-subtitle {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1.5rem;
+                text-align: center;
+            }
+            
+            .status-indicators {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-content {
+                padding: 1rem;
+                overflow-x: auto;
+            }
+            
+            .employee-table {
+                min-width: 800px;
+            }
+            
+            .skills-container {
+                max-width: 150px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-dot {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: loading 1.4s infinite both;
+            margin: 0 1px;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes loading {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="nokia-logo">N</div>
+                <div class="header-title">
+                    <h1>Nokia Employee Intelligence</h1>
+                    <div class="subtitle">Performance Dashboard & Outlook Integration</div>
+                </div>
+            </div>
+            <div class="status-indicators">
+                <div class="status-item">
+                    <div class="status-dot"></div>
+                    <span>ML Model Active</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot"></div>
+                    <span>Outlook Connected</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot"></div>
+                    <span>Real-time Sync</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Employee Recommendation Section -->
+        <section class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <div class="section-icon">👥</div>
+                    Recommended Employees
+                </h2>
+                <p class="section-description">
+                    AI-powered employee recommendations based on performance analytics and skill matching
+                </p>
+            </div>
+            <div class="section-content">
+                <table class="employee-table">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Team Assignment</th>
+                            <th>Technical Skills</th>
+                            <th>Performance</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-employee="yuvraj">
+                            <td>
+                                <div class="employee-name">Yuvraj </div>
+                                <div class="employee-email">yuvraj2.mitblr2023@learner.manipal.edu</div>
+                            </td>
+                            <td>
+                                <div class="team-badge team-l1">L1Team</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">
+                                    Spec-1 Division
+                                </div>
+                            </td>
+                            <td>
+                                <div class="skills-container">
+                                    <span class="skill-tag">Python</span>
+                                    <span class="skill-tag">SQL</span>
+                                    <span class="skill-tag">Data Analysis</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="performance-score">
+                                    <div class="score-value">78</div>
+                                    <div class="score-bar">
+                                        <div class="score-fill score-medium" style="width: 78%;"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="action-btn" onclick="sendOutlookEmail(this, 'yuvraj')">
+                                    <span>📧</span>
+                                    Send Email
+                                </button>
+                            </td>
+                        </tr>
+                        <tr data-employee="geet">
+                            <td>
+                                <div class="employee-name">Geet </div>
+                                <div class="employee-email">geet.mitblr2022@learner.manipal.edu</div>
+                            </td>
+                            <td>
+                                <div class="team-badge team-l1">L1Team</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">
+                                    Spec-1 Division
+                                </div>
+                            </td>
+                            <td>
+                                <div class="skills-container">
+                                    <span class="skill-tag">Accessibility</span>
+                                    <span class="skill-tag">HTML</span>
+                                    <span class="skill-tag">CSS</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="performance-score">
+                                    <div class="score-value">85</div>
+                                    <div class="score-bar">
+                                        <div class="score-fill score-high" style="width: 85%;"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="action-btn" onclick="sendOutlookEmail(this, 'geet')">
+                                    <span>📧</span>
+                                    Send Email
+                                </button>
+                            </td>
+                        </tr>
+                        <tr data-employee="ritu">
+                            <td>
+                                <div class="employee-name">Ritu </div>
+                                <div class="employee-email">ritu.mitblr2022@learner.manipal.edu</div>
+                            </td>
+                            <td>
+                                <div class="team-badge team-l2">L2Team</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">
+                                    Spec-2 Division
+                                </div>
+                            </td>
+                            <td>
+                                <div class="skills-container">
+                                    <span class="skill-tag">Python</span>
+                                    <span class="skill-tag">Machine Learning</span>
+                                    <span class="skill-tag">NLP</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="performance-score">
+                                    <div class="score-value">90</div>
+                                    <div class="score-bar">
+                                        <div class="score-fill score-high" style="width: 90%;"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="action-btn" onclick="sendOutlookEmail(this, 'ritu')">
+                                    <span>📧</span>
+                                    Send Email
+                                </button>
+                            </td>
+                        </tr>
+                        <tr data-employee="rishit">
+                            <td>
+                                <div class="employee-name">Rishit </div>
+                                <div class="employee-email">rishit.mitblr2022@learner.manipal.edu</div>
+                            </td>
+                            <td>
+                                <div class="team-badge team-l2">L2Team</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">
+                                    Spec-2 Division
+                                </div>
+                            </td>
+                            <td>
+                                <div class="skills-container">
+                                    <span class="skill-tag">Java</span>
+                                    <span class="skill-tag">Spring Boot</span>
+                                    <span class="skill-tag">API Design</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="performance-score">
+                                    <div class="score-value">82</div>
+                                    <div class="score-bar">
+                                        <div class="score-fill score-high" style="width: 82%;"></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <button class="action-btn" onclick="sendOutlookEmail(this, 'rishit')">
+                                    <span>📧</span>
+                                    Send Email
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Outlook Notifications Section -->
+        <section class="dashboard-section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <div class="section-icon">📧</div>
+                    Sprint Meetings & Outlook Notifications
+                </h2>
+                <p class="section-description">
+                    Real-time updates on sprint activities, meeting schedules, and email communications
+                </p>
+            </div>
+            <div class="section-content">
+                <div class="notification-list">
+                    <div class="notification-item notification-success">
+                        <div class="notification-icon success">✓</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Sprint Update Email Sent</div>
+                            <div class="notification-subtitle">Performance summary delivered to Yuvraj </div>
+                        </div>
+                        <div class="notification-time">2 minutes ago</div>
+                    </div>
+
+                    <div class="notification-item notification-success">
+                        <div class="notification-icon success">✓</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Performance Summary Delivered</div>
+                            <div class="notification-subtitle">Quarterly review report sent to Ritu </div>
+                        </div>
+                        <div class="notification-time">15 minutes ago</div>
+                    </div>
+
+                    <div class="notification-item notification-info">
+                        <div class="notification-icon info">📅</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Sprint Planning Meeting Scheduled</div>
+                            <div class="notification-subtitle">Meeting invite sent to L1Team and L2Team members</div>
+                        </div>
+                        <div class="notification-time">1 hour ago</div>
+                    </div>
+
+                    <div class="notification-item notification-warning">
+                        <div class="notification-icon warning">⚠</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Upcoming Sprint Review</div>
+                            <div class="notification-subtitle">Team performance evaluation scheduled for tomorrow 10:00 AM</div>
+                        </div>
+                        <div class="notification-time">3 hours ago</div>
+                    </div>
+
+                    <div class="notification-item notification-info">
+                        <div class="notification-icon info">🔄</div>
+                        <div class="notification-content">
+                            <div class="notification-title">Weekly Sync Meeting</div>
+                            <div class="notification-subtitle">Automated recurring meeting reminder for all team leads</div>
+                        </div>
+                        <div class="notification-time">1 day ago</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-title">&copy; 2025 Nokia Corporation - Employee Intelligence Dashboard</div>
+            <div class="footer-subtitle">
+                Powered by Machine Learning Analytics | Integrated with Microsoft Outlook | Real-time Performance Tracking
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Email sending functionality
+        function sendOutlookEmail(button, employeeId) {
+            // Get employee data
+            const row = button.closest('tr');
+            const employeeName = row.querySelector('.employee-name').textContent;
+            const employeeEmail = row.querySelector('.employee-email').textContent;
+            
+            // Update button state
+            button.innerHTML = `
+                <span class="loading-dot"></span>
+                <span class="loading-dot"></span>
+                <span class="loading-dot"></span>
+                Sending...
+            `;
+            button.disabled = true;
+
+            // Simulate email sending (replace with actual API call)
+            setTimeout(() => {
+                button.innerHTML = '<span>✅</span> Email Sent';
+                button.classList.add('sent');
+                
+                // Add notification
+                addNotification('success', 'Email Sent Successfully', `Performance update sent to ${employeeName}`);
+                
+                // Log to console (replace with actual API integration)
+                console.log(`Outlook email sent to: ${employeeName} (${employeeEmail})`);
+            }, 2000);
+        }
+
+        // Add notification function
+        function addNotification(type, title, subtitle) {
+            const notificationList = document.querySelector('.notification-list');
+            const newNotification = document.createElement('div');
+            newNotification.className = `notification-item notification-${type}`;
+            
+            const iconMap = {
+                'success': '✓',
+                'info': '📧',
+                'warning': '⚠'
+            };
+            
+            newNotification.innerHTML = `
+                <div class="notification-icon ${type}">${iconMap[type]}</div>
+                <div class="notification-content">
+                    <div class="notification-title">${title}</div>
+                    <div class="notification-subtitle">${subtitle}</div>
+                </div>
+                <div class="notification-time">Just now</div>
+            `;
+            
+            // Add with animation
+            newNotification.style.opacity = '0';
+            newNotification.style.transform = 'translateY(-20px)';
+            notificationList.insertBefore(newNotification, notificationList.firstChild);
+            
+            setTimeout(() => {
+                newNotification.style.transition = 'all 0.5s ease';
+                newNotification.style.opacity = '1';
+                newNotification.style.transform = 'translateY(0)';
+            }, 100);
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Nokia Employee Dashboard Initialized');
+            
+            // Animate performance bars on load
+            setTimeout(() => {
+                const scoreFills = document.querySelectorAll('.score-fill');
+                scoreFills.forEach(fill => {
+                    const width = fill.style.width;
+                    fill.style.width = '0%';
+                    fill.style.transition = 'width 1s ease-out';
+                    setTimeout(() => {
+                        fill.style.width = width;
+                    }, 100);
+                });
+            }, 500);
+        });
+
+        // Add hover effects for table rows
+        document.querySelectorAll('.employee-table tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
