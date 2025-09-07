@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nokia Employee Recommendation Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Nokia Employee Intelligence</h1>
+        <p>Performance Dashboard & Outlook Integration</p>
+    </header>
+
+    <main>
+        <section>
+            <h2>Recommended Employees</h2>
+            <p>AI-powered employee recommendations based on performance analytics and skill matching</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Team Assignment</th>
+                        <th>Technical Skills</th>
+                        <th>Performance</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in recommendations %}
+                    <tr data-employee="{{ employee.Employee_ID }}">
+                        <td>
+                            <div class="employee-name">{{ employee.Employee_Name }}</div>
+                            <div class="employee-email">{{ employee.Email }}</div>
+                        </td>
+                        <td>
+                            <div class="team-badge">{{ employee.Team }}</div>
+                        </td>
+                        <td>
+                            <div class="skills-container">
+                                {% for skill in employee.skills %}
+                                <span class="skill-tag">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="performance-score">
+                                <div class="score-value">{{ employee.Predicted_Efficiency }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="action-btn" onclick="sendOutlookEmail(this, '{{ employee.Employee_ID }}')">
+                                <span>📧</span>
+                                Send Email
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Sprint Meetings & Outlook Notifications</h2>
+            <div class="notification-list">
+                <!-- Notifications will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div>&copy; 2025 Nokia Corporation - Employee Intelligence Dashboard</div>
+        <div>Powered by Machine Learning Analytics | Integrated with Microsoft Outlook | Real-time Performance Tracking</div>
+    </footer>
+</body>
+</html>

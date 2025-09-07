@@ -1,0 +1,59 @@
+// filepath: /sprint_planning/sprint_planning/app/static/script.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to fetch employee recommendations from the backend
+    async function fetchRecommendations() {
+        try {
+            const response = await fetch('/api/recommendations'); // Endpoint to get recommendations
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const recommendations = await response.json();
+            displayRecommendations(recommendations);
+        } catch (error) {
+            console.error('Error fetching recommendations:', error);
+        }
+    }
+
+    // Function to display recommendations in the dashboard
+    function displayRecommendations(recommendations) {
+        const tableBody = document.querySelector('.employee-table tbody');
+        tableBody.innerHTML = ''; // Clear existing rows
+
+        recommendations.forEach(rec => {
+            const row = document.createElement('tr');
+            row.setAttribute('data-employee', rec.Employee_ID);
+            row.innerHTML = `
+                <td>
+                    <div class="employee-name">${rec.Employee_Name}</div>
+                    <div class="employee-email">${rec.Email}</div>
+                </td>
+                <td>
+                    <div class="team-badge team-l1">${rec.Team}</div>
+                </td>
+                <td>
+                    <div class="skills-container">
+                        ${rec.Skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                    </div>
+                </td>
+                <td>
+                    <div class="performance-score">
+                        <div class="score-value">${rec.Predicted_Efficiency}</div>
+                        <div class="score-bar">
+                            <div class="score-fill score-high" style="width: ${rec.Predicted_Efficiency}%;"></div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <button class="action-btn" onclick="sendOutlookEmail(this, '${rec.Employee_ID}')">
+                        <span>📧</span>
+                        Send Email
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Fetch recommendations on page load
+    fetchRecommendations();
+});
