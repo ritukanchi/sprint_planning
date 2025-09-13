@@ -181,6 +181,7 @@
             justify-content: center;
             font-size: 1.2rem;
             color: white;
+            flex-shrink: 0;
         }
 
         .section-description {
@@ -488,17 +489,13 @@
                 <div class="nokia-logo">N</div>
                 <div class="header-title">
                     <h1>Nokia Employee Intelligence</h1>
-                    <div class="subtitle">Performance Dashboard & Outlook Integration</div>
+                    <div class="subtitle">Performance Dashboard</div>
                 </div>
             </div>
             <div class="status-indicators">
                 <div class="status-item">
                     <div class="status-dot"></div>
                     <span>ML Model Active</span>
-                </div>
-                <div class="status-item">
-                    <div class="status-dot"></div>
-                    <span>Outlook Connected</span>
                 </div>
                 <div class="status-item">
                     <div class="status-dot"></div>
@@ -532,36 +529,11 @@
                             <th>Team Assignment</th>
                             <th>Technical Skills</th>
                             <th>Performance</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                     </tbody>
                 </table>
-            </div>
-        </section>
-
-        <section class="dashboard-section">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <div class="section-icon">📧</div>
-                    Sprint Meetings & Outlook Notifications
-                </h2>
-                <p class="section-description">
-                    Real-time updates on sprint activities, meeting schedules, and email communications
-                </p>
-            </div>
-            <div class="section-content">
-                <div class="notification-list">
-                    <div class="notification-item notification-success">
-                        <div class="notification-icon success">✓</div>
-                        <div class="notification-content">
-                            <div class="notification-title">Sprint Update Email Sent</div>
-                            <div class="notification-subtitle">Performance summary delivered to Yuvraj</div>
-                        </div>
-                        <div class="notification-time">2 minutes ago</div>
-                    </div>
-                </div>
             </div>
         </section>
     </div>
@@ -570,7 +542,7 @@
         <div class="footer-content">
             <div class="footer-title">&copy; 2025 Nokia Corporation - Employee Intelligence Dashboard</div>
             <div class="footer-subtitle">
-                Powered by Machine Learning Analytics | Integrated with Microsoft Outlook | Real-time Performance Tracking
+                Powered by Machine Learning Analytics | Real-time Performance Tracking
             </div>
         </div>
     </footer>
@@ -578,20 +550,20 @@
     <script>
         async function fetchRecommendations(skills) {
             const tbody = document.querySelector('.employee-table tbody');
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading recommendations...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">Loading recommendations...</td></tr>';
             try {
                 const response = await fetch('http://localhost:5000/api/recommendations', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ task_skills: skills, top_n: 10 })
-            });
+                });
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
                 renderRecommendations(data);
             } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--danger);">Failed to load recommendations.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--danger);">Failed to load recommendations.</td></tr>';
                 console.error('Error fetching recommendations:', error);
             }
         }
@@ -600,7 +572,7 @@
             const tbody = document.querySelector('.employee-table tbody');
             tbody.innerHTML = '';
             if (recommendations.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-light);">No recommendations found for the specified skills.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-light);">No recommendations found for the specified skills.</td></tr>';
                 return;
             }
             recommendations.forEach(emp => {
@@ -628,12 +600,6 @@
                             </div>
                         </div>
                     </td>
-                    <td>
-                        <button class="action-btn" data-employee-id="${emp.Employee_ID}">
-                            <span>📧</span>
-                            Send Email
-                        </button>
-                    </td>
                 `;
                 tbody.appendChild(row);
             });
@@ -645,93 +611,6 @@
             fetchRecommendations(skills);
         });
 
-        document.querySelector('.employee-table tbody').addEventListener('click', async (e) => {
-            const button = e.target.closest('.action-btn');
-            if (button) {
-                const employeeId = button.getAttribute('data-employee-id');
-                const skillsInput = document.getElementById('skills-input').value;
-                await sendOutlookEmail(button, employeeId, skillsInput);
-            }
-        });
-        
-        // Email sending functionality
-        async function sendOutlookEmail(button, employeeId, skills) {
-            const originalButtonContent = button.innerHTML;
-            
-            // Get employee data from the table row
-            const row = button.closest('tr');
-            const employeeName = row.querySelector('.employee-name').textContent;
-            
-            // Update button state to show loading
-            button.innerHTML = `
-                <span class="loading-dot"></span>
-                <span class="loading-dot"></span>
-                <span class="loading-dot"></span>
-                Sending...
-            `;
-            button.disabled = true;
-
-            try {
-                const response = await fetch('http://localhost:5000/api/send_email', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ employeeId: employeeId, taskSkills: skills.split(',').map(s => s.trim()) })
-            });
-
-                const result = await response.json();
-                
-                if (response.ok) {
-                    button.innerHTML = '<span>Successfully</span> sent Email ';
-                    button.classList.add('sent');
-                    addNotification('success', 'Email Sent Successfully', `Performance update sent to ${employeeName}`);
-                } else {
-                    button.innerHTML = originalButtonContent;
-                    button.disabled = false;
-                    addNotification('warning', 'Email Failed', `Could not send email. Error: ${result.message}`);
-                    console.error('Email sending failed:', result.message);
-                }
-            } catch (error) {
-                button.innerHTML = originalButtonContent;
-                button.disabled = false;
-                addNotification('danger', 'Email Failed', 'An unexpected error occurred.');
-                console.error('Network or server error:', error);
-            }
-        }
-
-        // Add notification function
-        function addNotification(type, title, subtitle) {
-            const notificationList = document.querySelector('.notification-list');
-            const newNotification = document.createElement('div');
-            newNotification.className = `notification-item notification-${type}`;
-            
-            const iconMap = {
-                'success': '✓',
-                'info': '📧',
-                'warning': '⚠',
-                'danger': '❌'
-            };
-            
-            newNotification.innerHTML = `
-                <div class="notification-icon ${type}">${iconMap[type]}</div>
-                <div class="notification-content">
-                    <div class="notification-title">${title}</div>
-                    <div class="notification-subtitle">${subtitle}</div>
-                </div>
-                <div class="notification-time">Just now</div>
-            `;
-            
-            newNotification.style.opacity = '0';
-            newNotification.style.transform = 'translateY(-20px)';
-            notificationList.insertBefore(newNotification, notificationList.firstChild);
-            
-            setTimeout(() => {
-                newNotification.style.transition = 'all 0.5s ease';
-                newNotification.style.opacity = '1';
-                newNotification.style.transform = 'translateY(0)';
-            }, 100);
-        }
-
-        // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('.employee-table tbody').innerHTML = '';
             

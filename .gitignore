@@ -40,7 +40,7 @@ env/
 
 
 .vscode/
-
+    
 *.joblib
 *.db
 *app/models/trained_models/
