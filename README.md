@@ -1,6 +1,8 @@
 # Employee Recommendation System
 
-This project implements an employee recommendation system using machine learning techniques to analyze employee performance and skills. The system provides recommendations for employees based on their skills and performance metrics, facilitating better task assignments and team management.
+This project implements an **employee recommendation system** using machine learning techniques to analyze employee performance and skills. The system provides recommendations for employees based on their skills and performance metrics, facilitating better task assignments and team management.
+
+---
 
 ## Project Structure
 
@@ -8,51 +10,68 @@ This project implements an employee recommendation system using machine learning
 sprint_planning
 ├── app
 │   ├── models
-│   │   └── Model_training.ipynb  # Jupyter notebook for model training and recommendations
+│   │   └── Model_training.ipynb    
 │   ├── routes
-│   │   └── dashboard.html         # HTML file for the user interface
-│   ├── static                     # Directory for static files (JS/CSS)
-│   ├── templates                  # Directory for dynamic HTML templates
-│   └── __init__.py               # Application initialization file
-├── requirements.txt               # List of project dependencies
-└── README.md                      # Project documentation
+│   │   └── dashboard.html          
+│   ├── static                      
+│   ├── templates                  
+│   └── __init__.py                
+├── requirements.txt                
+└── README.md                       
 ```
+
+---
 
 ## Installation
 
-1. Clone the repository:
-   ```
-   git clone <repository-url>
-   cd sprint_planning
-   ```
+Clone the repository:
 
-2. Install the required dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+```bash
+git clone <https://github.com/ritukanchi/sprint_planning>
+cd sprint_planning
+```
+
+Install the required dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
 
 ## Usage
 
-1. Launch the application:
-   - If using Flask, run the following command:
-     ```
-     flask run
-     ```
+Follow these steps to set up and use the employee recommendation system:
 
-2. Open your web browser and navigate to `http://127.0.0.1:5000` to access the dashboard.
+1. **Set up the database**  
+   ```bash
+   python app/models/database.py
+   ```
 
-3. Use the dashboard to enter task skills and receive employee recommendations based on the trained models.
+2. **Train the machine learning model**  
+   ```bash
+   python app/models/Model_training.py
+   ```
+
+3. **Start the API/server**  
+   ```bash
+   python api.py
+   ```
+
+4. **Access the dashboard**  
+   Open the `dashboard.html` file in your local browser to interact with the system's user interface.
+
+---
 
 ## Features
 
-- **Employee Recommendations**: The system recommends employees based on their skills and performance metrics.
-- **User Interface**: A clean and interactive dashboard for users to input tasks and view recommendations.
-- **Notifications**: Real-time updates on sprint activities and email communications.
+- **Employee Recommendations**: Recommends employees based on skills and performance metrics.  
+- **User Interface**: Clean and interactive dashboard for task input and viewing recommendations.  
+- **Notifications**: Real-time updates on sprint activities and email communications.  
 
-## Contributing
-
-Contributions are welcome! Please submit a pull request or open an issue for any suggestions or improvements.
+---
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the **MIT License**.  
+See the [LICENSE](LICENSE) file for details.
