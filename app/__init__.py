@@ -1,3 +1,4 @@
+"""
 from flask import Flask, render_template, request, jsonify
 from models.Model_training import recommend_employees  # Assuming the function is accessible
 
@@ -16,3 +17,4 @@ def recommend():
 
 if __name__ == '__main__':
     app.run(debug=True)
+    """

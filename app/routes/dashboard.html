@@ -134,14 +134,12 @@
             50% { opacity: 0.6; }
         }
 
-        /* Main Container */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
         }
 
-        /* Dashboard Cards */
         .dashboard-section {
             background: white;
             border-radius: 16px;
@@ -195,7 +193,6 @@
             padding: 2rem;
         }
 
-        /* Employee Table */
         .employee-table {
             width: 100%;
             border-collapse: collapse;
@@ -317,7 +314,6 @@
         .score-medium { background: linear-gradient(90deg, var(--warning) 0%, #facc15 100%); }
         .score-low { background: linear-gradient(90deg, var(--danger) 0%, #f87171 100%); }
 
-        /* Action Button */
         .action-btn {
             background: linear-gradient(135deg, var(--nokia-blue) 0%, var(--nokia-dark-blue) 100%);
             color: white;
@@ -349,7 +345,6 @@
             cursor: not-allowed;
         }
 
-        /* Notifications */
         .notification-list {
             display: grid;
             gap: 1rem;
@@ -424,32 +419,6 @@
             font-weight: 500;
         }
 
-        /* Footer */
-        .footer {
-            background: linear-gradient(135deg, var(--nokia-dark-blue) 0%, #0f172a 100%);
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 3rem;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-subtitle {
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        /* Responsive Design */
         @media (max-width: 1024px) {
             .container {
                 padding: 1rem;
@@ -486,7 +455,6 @@
             }
         }
 
-        /* Loading Animation */
         .loading-dot {
             display: inline-block;
             width: 4px;
@@ -540,9 +508,12 @@
         </div>
     </header>
 
-    <!-- Main Container -->
     <div class="container">
-        <!-- Employee Recommendation Section -->
+        <form id="skills-form" style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center;">
+            <input type="text" id="skills-input" placeholder="Enter required skills (comma separated)" style="padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid #e2e8f0; width: 350px; font-size: 1rem;">
+            <button type="submit" class="action-btn">Get Recommendations</button>
+        </form>
+
         <section class="dashboard-section">
             <div class="section-header">
                 <h2 class="section-title">
@@ -565,144 +536,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr data-employee="yuvraj">
-                            <td>
-                                <div class="employee-name">Yuvraj </div>
-                                <div class="employee-email">yuvraj2.mitblr2023@learner.manipal.edu</div>
-                            </td>
-                            <td>
-                                <div class="team-badge team-l1">L1Team</div>
-                                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">
-                                    Spec-1 Division
-                                </div>
-                            </td>
-                            <td>
-                                <div class="skills-container">
-                                    <span class="skill-tag">Python</span>
-                                    <span class="skill-tag">SQL</span>
-                                    <span class="skill-tag">Data Analysis</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="performance-score">
-                                    <div class="score-value">78</div>
-                                    <div class="score-bar">
-                                        <div class="score-fill score-medium" style="width: 78%;"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <button class="action-btn" onclick="sendOutlookEmail(this, 'yuvraj')">
-                                    <span>📧</span>
-                                    Send Email
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-employee="geet">
-                            <td>
-                                <div class="employee-name">Geet </div>
-                                <div class="employee-email">geet.mitblr2022@learner.manipal.edu</div>
-                            </td>
-                            <td>
-                                <div class="team-badge team-l1">L1Team</div>
-                                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">
-                                    Spec-1 Division
-                                </div>
-                            </td>
-                            <td>
-                                <div class="skills-container">
-                                    <span class="skill-tag">Accessibility</span>
-                                    <span class="skill-tag">HTML</span>
-                                    <span class="skill-tag">CSS</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="performance-score">
-                                    <div class="score-value">85</div>
-                                    <div class="score-bar">
-                                        <div class="score-fill score-high" style="width: 85%;"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <button class="action-btn" onclick="sendOutlookEmail(this, 'geet')">
-                                    <span>📧</span>
-                                    Send Email
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-employee="ritu">
-                            <td>
-                                <div class="employee-name">Ritu </div>
-                                <div class="employee-email">ritu.mitblr2022@learner.manipal.edu</div>
-                            </td>
-                            <td>
-                                <div class="team-badge team-l2">L2Team</div>
-                                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">
-                                    Spec-2 Division
-                                </div>
-                            </td>
-                            <td>
-                                <div class="skills-container">
-                                    <span class="skill-tag">Python</span>
-                                    <span class="skill-tag">Machine Learning</span>
-                                    <span class="skill-tag">NLP</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="performance-score">
-                                    <div class="score-value">90</div>
-                                    <div class="score-bar">
-                                        <div class="score-fill score-high" style="width: 90%;"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <button class="action-btn" onclick="sendOutlookEmail(this, 'ritu')">
-                                    <span>📧</span>
-                                    Send Email
-                                </button>
-                            </td>
-                        </tr>
-                        <tr data-employee="rishit">
-                            <td>
-                                <div class="employee-name">Rishit </div>
-                                <div class="employee-email">rishit.mitblr2022@learner.manipal.edu</div>
-                            </td>
-                            <td>
-                                <div class="team-badge team-l2">L2Team</div>
-                                <div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">
-                                    Spec-2 Division
-                                </div>
-                            </td>
-                            <td>
-                                <div class="skills-container">
-                                    <span class="skill-tag">Java</span>
-                                    <span class="skill-tag">Spring Boot</span>
-                                    <span class="skill-tag">API Design</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="performance-score">
-                                    <div class="score-value">82</div>
-                                    <div class="score-bar">
-                                        <div class="score-fill score-high" style="width: 82%;"></div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <button class="action-btn" onclick="sendOutlookEmail(this, 'rishit')">
-                                    <span>📧</span>
-                                    Send Email
-                                </button>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <!-- Outlook Notifications Section -->
         <section class="dashboard-section">
             <div class="section-header">
                 <h2 class="section-title">
@@ -719,52 +557,15 @@
                         <div class="notification-icon success">✓</div>
                         <div class="notification-content">
                             <div class="notification-title">Sprint Update Email Sent</div>
-                            <div class="notification-subtitle">Performance summary delivered to Yuvraj </div>
+                            <div class="notification-subtitle">Performance summary delivered to Yuvraj</div>
                         </div>
                         <div class="notification-time">2 minutes ago</div>
-                    </div>
-
-                    <div class="notification-item notification-success">
-                        <div class="notification-icon success">✓</div>
-                        <div class="notification-content">
-                            <div class="notification-title">Performance Summary Delivered</div>
-                            <div class="notification-subtitle">Quarterly review report sent to Ritu </div>
-                        </div>
-                        <div class="notification-time">15 minutes ago</div>
-                    </div>
-
-                    <div class="notification-item notification-info">
-                        <div class="notification-icon info">📅</div>
-                        <div class="notification-content">
-                            <div class="notification-title">Sprint Planning Meeting Scheduled</div>
-                            <div class="notification-subtitle">Meeting invite sent to L1Team and L2Team members</div>
-                        </div>
-                        <div class="notification-time">1 hour ago</div>
-                    </div>
-
-                    <div class="notification-item notification-warning">
-                        <div class="notification-icon warning">⚠</div>
-                        <div class="notification-content">
-                            <div class="notification-title">Upcoming Sprint Review</div>
-                            <div class="notification-subtitle">Team performance evaluation scheduled for tomorrow 10:00 AM</div>
-                        </div>
-                        <div class="notification-time">3 hours ago</div>
-                    </div>
-
-                    <div class="notification-item notification-info">
-                        <div class="notification-icon info">🔄</div>
-                        <div class="notification-content">
-                            <div class="notification-title">Weekly Sync Meeting</div>
-                            <div class="notification-subtitle">Automated recurring meeting reminder for all team leads</div>
-                        </div>
-                        <div class="notification-time">1 day ago</div>
                     </div>
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-title">&copy; 2025 Nokia Corporation - Employee Intelligence Dashboard</div>
@@ -775,14 +576,93 @@
     </footer>
 
     <script>
+        async function fetchRecommendations(skills) {
+            const tbody = document.querySelector('.employee-table tbody');
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem;">Loading recommendations...</td></tr>';
+            try {
+                const response = await fetch('http://localhost:5000/api/recommendations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ task_skills: skills, top_n: 10 })
+            });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                renderRecommendations(data);
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--danger);">Failed to load recommendations.</td></tr>';
+                console.error('Error fetching recommendations:', error);
+            }
+        }
+
+        function renderRecommendations(recommendations) {
+            const tbody = document.querySelector('.employee-table tbody');
+            tbody.innerHTML = '';
+            if (recommendations.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-light);">No recommendations found for the specified skills.</td></tr>';
+                return;
+            }
+            recommendations.forEach(emp => {
+                const teamBadgeClass = emp.Team === 'L1Team' ? 'team-l1' : 'team-l2';
+                const scoreClass = emp.Predicted_Efficiency >= 80 ? 'score-high' : (emp.Predicted_Efficiency >= 70 ? 'score-medium' : 'score-low');
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="employee-name">${emp.Employee_Name}</div>
+                        <div class="employee-email">${emp.Email}</div>
+                    </td>
+                    <td>
+                        <div class="team-badge ${teamBadgeClass}">${emp.Team || ''}</div>
+                    </td>
+                    <td>
+                        <div class="skills-container">
+                            ${(emp.Skills || []).map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                        </div>
+                    </td>
+                    <td>
+                        <div class="performance-score">
+                            <div class="score-value">${emp.Predicted_Efficiency}</div>
+                            <div class="score-bar">
+                                <div class="score-fill ${scoreClass}" style="width: ${emp.Predicted_Efficiency}%;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="action-btn" data-employee-id="${emp.Employee_ID}">
+                            <span>📧</span>
+                            Send Email
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        document.getElementById('skills-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const skills = document.getElementById('skills-input').value;
+            fetchRecommendations(skills);
+        });
+
+        document.querySelector('.employee-table tbody').addEventListener('click', async (e) => {
+            const button = e.target.closest('.action-btn');
+            if (button) {
+                const employeeId = button.getAttribute('data-employee-id');
+                const skillsInput = document.getElementById('skills-input').value;
+                await sendOutlookEmail(button, employeeId, skillsInput);
+            }
+        });
+        
         // Email sending functionality
-        function sendOutlookEmail(button, employeeId) {
-            // Get employee data
+        async function sendOutlookEmail(button, employeeId, skills) {
+            const originalButtonContent = button.innerHTML;
+            
+            // Get employee data from the table row
             const row = button.closest('tr');
             const employeeName = row.querySelector('.employee-name').textContent;
-            const employeeEmail = row.querySelector('.employee-email').textContent;
             
-            // Update button state
+            // Update button state to show loading
             button.innerHTML = `
                 <span class="loading-dot"></span>
                 <span class="loading-dot"></span>
@@ -791,17 +671,31 @@
             `;
             button.disabled = true;
 
-            // Simulate email sending (replace with actual API call)
-            setTimeout(() => {
-                button.innerHTML = '<span>✅</span> Email Sent';
-                button.classList.add('sent');
+            try {
+                const response = await fetch('http://localhost:5000/api/send_email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ employeeId: employeeId, taskSkills: skills.split(',').map(s => s.trim()) })
+            });
+
+                const result = await response.json();
                 
-                // Add notification
-                addNotification('success', 'Email Sent Successfully', `Performance update sent to ${employeeName}`);
-                
-                // Log to console (replace with actual API integration)
-                console.log(`Outlook email sent to: ${employeeName} (${employeeEmail})`);
-            }, 2000);
+                if (response.ok) {
+                    button.innerHTML = '<span>Successfully</span> sent Email ';
+                    button.classList.add('sent');
+                    addNotification('success', 'Email Sent Successfully', `Performance update sent to ${employeeName}`);
+                } else {
+                    button.innerHTML = originalButtonContent;
+                    button.disabled = false;
+                    addNotification('warning', 'Email Failed', `Could not send email. Error: ${result.message}`);
+                    console.error('Email sending failed:', result.message);
+                }
+            } catch (error) {
+                button.innerHTML = originalButtonContent;
+                button.disabled = false;
+                addNotification('danger', 'Email Failed', 'An unexpected error occurred.');
+                console.error('Network or server error:', error);
+            }
         }
 
         // Add notification function
@@ -813,7 +707,8 @@
             const iconMap = {
                 'success': '✓',
                 'info': '📧',
-                'warning': '⚠'
+                'warning': '⚠',
+                'danger': '❌'
             };
             
             newNotification.innerHTML = `
@@ -825,7 +720,6 @@
                 <div class="notification-time">Just now</div>
             `;
             
-            // Add with animation
             newNotification.style.opacity = '0';
             newNotification.style.transform = 'translateY(-20px)';
             notificationList.insertBefore(newNotification, notificationList.firstChild);
@@ -839,31 +733,11 @@
 
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.employee-table tbody').innerHTML = '';
+            
+            fetchRecommendations("Python, Flask, API");
+            
             console.log('Nokia Employee Dashboard Initialized');
-            
-            // Animate performance bars on load
-            setTimeout(() => {
-                const scoreFills = document.querySelectorAll('.score-fill');
-                scoreFills.forEach(fill => {
-                    const width = fill.style.width;
-                    fill.style.width = '0%';
-                    fill.style.transition = 'width 1s ease-out';
-                    setTimeout(() => {
-                        fill.style.width = width;
-                    }, 100);
-                });
-            }, 500);
-        });
-
-        // Add hover effects for table rows
-        document.querySelectorAll('.employee-table tbody tr').forEach(row => {
-            row.addEventListener('mouseenter', function() {
-                this.style.transform = 'scale(1.02)';
-            });
-            
-            row.addEventListener('mouseleave', function() {
-                this.style.transform = 'scale(1)';
-            });
         });
     </script>
 </body>
