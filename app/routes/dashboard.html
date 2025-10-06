@@ -552,7 +552,7 @@
             const tbody = document.querySelector('.employee-table tbody');
             tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 2rem;">Loading recommendations...</td></tr>';
             try {
-                const response = await fetch('http://localhost:5000/api/recommendations', {
+                const response = await fetch('/api/recommendations', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ task_skills: skills, top_n: 10 })
