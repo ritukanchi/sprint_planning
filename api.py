@@ -7,6 +7,7 @@ from flask import Flask, jsonify, request, redirect, url_for, render_template
 import pandas as pd
 from dotenv import load_dotenv 
 import sqlite3 
+import logging
 
 app = Flask(__name__)
 CORS(app)
@@ -17,6 +18,7 @@ lr = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/lr.joblib'))
 rf = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/rf.joblib'))
 xgb_model = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/xgb.joblib'))
 team_encoder = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/team_encoder.joblib'))
+logging.basicConfig(level=logging.DEBUG)
 
 
 @app.route("/")

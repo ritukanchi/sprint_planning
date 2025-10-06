@@ -10,7 +10,6 @@ import os
 import warnings
 import sqlite3
 
-# Suppress XGBoost deprecation warnings for cleaner output
 warnings.filterwarnings("ignore", category=UserWarning, module="xgboost")
 
 def get_data_from_db(db_path='app/database.db'):
@@ -135,7 +134,6 @@ def recommend_employees(new_task_skill_text, top_n=5, models=None, team_encoder=
         })
     return pd.DataFrame(rows).sort_values('Predicted_Efficiency', ascending=False).head(top_n)
 
-# Export for import in api.py
 agg = employees_df.set_index('Employee_ID')
 if __name__ == '__main__':
     train_and_save_models()
