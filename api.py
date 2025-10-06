@@ -3,7 +3,7 @@ import os
 import joblib
 from flask_cors import CORS
 from app.models.Model_training import recommend_employees, agg, employee_skills
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect, url_for, render_template
 import pandas as pd
 from dotenv import load_dotenv 
 import sqlite3 
@@ -16,6 +16,16 @@ lr = joblib.load('app/models/trained_models/lr.joblib')
 rf = joblib.load('app/models/trained_models/rf.joblib')
 xgb_model = joblib.load('app/models/trained_models/xgb.joblib')
 team_encoder = joblib.load('app/models/trained_models/team_encoder.joblib')
+
+@app.route("/")
+def home():
+    """Redirect root to dashboard"""
+    return redirect(url_for("dashboard"))
+
+@app.route("/dashboard")
+def dashboard():
+    """Serve the dashboard frontend"""
+    return render_template("dashboard.html")
 
 @app.route('/api/recommendations', methods=['GET'])
 def get_static_recommendations():
@@ -41,4 +51,4 @@ def recommend_employees_api():
     return jsonify(recommendations_df.to_dict(orient='records'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)

@@ -83,3 +83,11 @@ threadpoolctl==3.6.0
 tzdata==2025.2
 Werkzeug==3.1.3
 xgboost==3.0.5
+flask
+flask-cors
+gunicorn
+joblib
+pandas
+python-dotenv
+xgboost
+scikit-learn
