@@ -5,8 +5,8 @@ from flask_cors import CORS
 from app.models.Model_training import recommend_employees, agg, employee_skills
 from flask import Flask, jsonify, request, redirect, url_for, render_template
 import pandas as pd
-from dotenv import load_dotenv 
-import sqlite3 
+from dotenv import load_dotenv
+import sqlite3
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -32,7 +32,6 @@ except Exception as e:
 
 @app.route("/")
 def home():
-    """Redirect root to dashboard"""
     return redirect(url_for("dashboard"))
 
 @app.route("/dashboard")
@@ -54,7 +53,6 @@ def get_static_recommendations():
         logging.error(f"Error loading recommendations.json: {e}")
         return jsonify({"error": "Failed to load static recommendations."}), 500
 
-
 @app.route('/api/recommendations', methods=['POST'])
 def recommend_employees_api():
     if not all([lr, rf, xgb_model, team_encoder]):
@@ -74,7 +72,6 @@ def recommend_employees_api():
         
         recommendations_df['Team'] = recommendations_df['Employee_ID'].map(lambda eid: agg.loc[eid, 'Team'])
         recommendations_df['Skills'] = recommendations_df['Employee_ID'].map(lambda eid: list(employee_skills.get(eid, [])))
-
         recommendations_df['Team'] = recommendations_df['Team'].fillna('')
         
         return jsonify(recommendations_df.to_dict(orient='records'))
