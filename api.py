@@ -9,27 +9,30 @@ from dotenv import load_dotenv
 import sqlite3 
 import logging
 
+logging.basicConfig(level=logging.DEBUG)
+load_dotenv()
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 TEMPLATE_DIR = os.path.join(BASE_DIR, 'app', 'templates')
+MODELS_PATH = os.path.join(BASE_DIR, 'app', 'models', 'trained_models')
 
 app = Flask(__name__, template_folder=TEMPLATE_DIR)
 CORS(app)
-load_dotenv()
+
+lr, rf, xgb_model, team_encoder = None, None, None, None
+
 try:
-    lr = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/lr.joblib'))
-    rf = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/rf.joblib'))
-    xgb_model = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/xgb.joblib'))
-    team_encoder = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/team_encoder.joblib'))
+    lr = joblib.load(os.path.join(MODELS_PATH, 'lr.joblib'))
+    rf = joblib.load(os.path.join(MODELS_PATH, 'rf.joblib'))
+    xgb_model = joblib.load(os.path.join(MODELS_PATH, 'xgb.joblib'))
+    team_encoder = joblib.load(os.path.join(MODELS_PATH, 'team_encoder.joblib'))
     logging.info("ML models loaded successfully.")
 except Exception as e:
-    logging.error(f"FATAL: Failed to load one or more ML models: {e}")
-    lr, rf, xgb_model, team_encoder = None, None, None, None
-
-logging.basicConfig(level=logging.DEBUG)
-
+    logging.error(f"FATAL: Failed to load one or more ML models from {MODELS_PATH}: {e}")
 
 @app.route("/")
 def home():
+    """Redirect root to dashboard"""
     return redirect(url_for("dashboard"))
 
 @app.route("/dashboard")
@@ -55,14 +58,14 @@ def get_static_recommendations():
 @app.route('/api/recommendations', methods=['POST'])
 def recommend_employees_api():
     if not all([lr, rf, xgb_model, team_encoder]):
-        return jsonify({"error": "ML models are not available on the server."}), 503
+        return jsonify({"error": "ML models are not available on the server. Deployment failed to load assets."}), 503
         
     data = request.get_json()
     task_skills = data.get('task_skills', '')
     top_n = data.get('top_n', 10)
     
     if agg is None or employee_skills is None:
-         return jsonify({"error": "ML backend data (agg/skills) failed to load. Check Model_training.py execution."}), 500
+         return jsonify({"error": "ML backend data (agg/skills) failed to load. Check database connectivity."}), 500
 
     try:
         recommendations_df = recommend_employees(
@@ -72,6 +75,8 @@ def recommend_employees_api():
         recommendations_df['Team'] = recommendations_df['Employee_ID'].map(lambda eid: agg.loc[eid, 'Team'])
         recommendations_df['Skills'] = recommendations_df['Employee_ID'].map(lambda eid: list(employee_skills.get(eid, [])))
 
+        recommendations_df['Team'] = recommendations_df['Team'].fillna('')
+        
         return jsonify(recommendations_df.to_dict(orient='records'))
     except Exception as e:
         logging.error(f"Error during recommendation generation: {e}")
