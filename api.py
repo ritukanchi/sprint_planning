@@ -9,50 +9,73 @@ from dotenv import load_dotenv
 import sqlite3 
 import logging
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+TEMPLATE_DIR = os.path.join(BASE_DIR, 'app', 'templates')
+
+app = Flask(__name__, template_folder=TEMPLATE_DIR)
 CORS(app)
 load_dotenv()
+try:
+    lr = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/lr.joblib'))
+    rf = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/rf.joblib'))
+    xgb_model = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/xgb.joblib'))
+    team_encoder = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/team_encoder.joblib'))
+    logging.info("ML models loaded successfully.")
+except Exception as e:
+    logging.error(f"FATAL: Failed to load one or more ML models: {e}")
+    lr, rf, xgb_model, team_encoder = None, None, None, None
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-lr = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/lr.joblib'))
-rf = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/rf.joblib'))
-xgb_model = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/xgb.joblib'))
-team_encoder = joblib.load(os.path.join(BASE_DIR, 'app/models/trained_models/team_encoder.joblib'))
 logging.basicConfig(level=logging.DEBUG)
 
 
 @app.route("/")
 def home():
-    """Redirect root to dashboard"""
     return redirect(url_for("dashboard"))
 
 @app.route("/dashboard")
 def dashboard():
-    """Serve the dashboard frontend"""
     return render_template("dashboard.html")
 
 @app.route('/api/recommendations', methods=['GET'])
 def get_static_recommendations():
-    path = os.path.join('models', 'recommendations.json')
+    path = os.path.join(BASE_DIR, 'app', 'models', 'recommendations.json')
+    
     if not os.path.exists(path):
-        return jsonify([])
-    with open(path, 'r') as f:
-        data = json.load(f)
-    return jsonify(data)
-
+        return jsonify({"error": "Static recommendations file not found."}), 404
+        
+    try:
+        with open(path, 'r') as f:
+            data = json.load(f)
+        return jsonify(data)
+    except Exception as e:
+        logging.error(f"Error loading recommendations.json: {e}")
+        return jsonify({"error": "Failed to load static recommendations."}), 500
 
 
 @app.route('/api/recommendations', methods=['POST'])
 def recommend_employees_api():
+    if not all([lr, rf, xgb_model, team_encoder]):
+        return jsonify({"error": "ML models are not available on the server."}), 503
+        
     data = request.get_json()
     task_skills = data.get('task_skills', '')
     top_n = data.get('top_n', 10)
-    recommendations_df = recommend_employees(
-        task_skills, top_n=top_n, models=[lr, rf, xgb_model], team_encoder=team_encoder
-    )
-    recommendations_df['Team'] = recommendations_df['Employee_ID'].map(lambda eid: agg.loc[eid]['team'])
-    recommendations_df['Skills'] = recommendations_df['Employee_ID'].map(lambda eid: list(employee_skills[eid]))
-    return jsonify(recommendations_df.to_dict(orient='records'))
+    
+    if agg is None or employee_skills is None:
+         return jsonify({"error": "ML backend data (agg/skills) failed to load. Check Model_training.py execution."}), 500
+
+    try:
+        recommendations_df = recommend_employees(
+            task_skills, top_n=top_n, models=[lr, rf, xgb_model], team_encoder=team_encoder
+        )
+        
+        recommendations_df['Team'] = recommendations_df['Employee_ID'].map(lambda eid: agg.loc[eid, 'Team'])
+        recommendations_df['Skills'] = recommendations_df['Employee_ID'].map(lambda eid: list(employee_skills.get(eid, [])))
+
+        return jsonify(recommendations_df.to_dict(orient='records'))
+    except Exception as e:
+        logging.error(f"Error during recommendation generation: {e}")
+        return jsonify({"error": "Failed to process recommendation request.", "details": str(e)}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
